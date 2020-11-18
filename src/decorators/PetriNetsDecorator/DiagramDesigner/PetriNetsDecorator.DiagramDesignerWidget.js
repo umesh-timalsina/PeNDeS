@@ -41,7 +41,6 @@ define([
     /*********************** OVERRIDE DiagramDesignerWidgetDecoratorBase MEMBERS **************************/
 
     PetriNetsDecorator.prototype.on_addTo = function () {
-        this.skinParts.$textInfo = this.$el.find('.name');
         this._renderContent();
 
     };
