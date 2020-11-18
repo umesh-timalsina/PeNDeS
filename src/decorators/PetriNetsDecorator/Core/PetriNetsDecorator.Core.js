@@ -128,9 +128,21 @@ define([
     PetriNetsDecoratorCore.prototype._updateName = function () {
         const node = this.getCurrentNode();
         if (node && this.skinParts.$name) {
-            const name = this.TYPE_INFO.isPlace(node.getId()) ?
-                node.getAttribute('name') + ' - ' + node.getAttribute('marking') :
-                node.getAttribute('name');
+            let name;
+            if (this.TYPE_INFO.isPlace(node.getId())) {
+                name = node.getAttribute('name') + ' - ' + node.getAttribute('marking');
+            } else if (this.TYPE_INFO.isPetriNet(node.getId())) {
+                name = node.getAttribute('name') + ' ';
+                const places = PetriNetsDecoratorMETA.getChildrenOfType(node, 'Place');
+
+                if (places) {
+                    places.forEach(place => {
+                        name += place.getAttribute('name') + '-' + place.getAttribute('marking') + ' '
+                    });
+                }
+            } else {
+                name = node.getAttribute('name');
+            }
 
             this.skinParts.$name.text(name);
         }
@@ -143,7 +155,7 @@ define([
     };
 
     PetriNetsDecoratorCore.prototype._updatePorts = function () {
-        var gmeID = this._metaInfo[CONSTANTS.GME_ID],
+        let gmeID = this._metaInfo[CONSTANTS.GME_ID],
             isTypePlace = this.TYPE_INFO.isPlace(gmeID),
             isTypeTransition = this.TYPE_INFO.isTransition(gmeID),
             len = 4,
@@ -187,7 +199,7 @@ define([
             while (len--) {
                 portId = 3 - len;
                 // render connector
-                var connectorE = $('<div/>', {'class': DiagramDesignerWidgetConstants.CONNECTOR_CLASS});
+                let connectorE = $('<div/>', {'class': DiagramDesignerWidgetConstants.CONNECTOR_CLASS});
 
                 if (portId === 3) {
                     connectorE.addClass(PetriNetsDecoratorConstants.BOTTOM_PORT_CLASS);
@@ -224,7 +236,7 @@ define([
     };
 
     PetriNetsDecoratorCore.prototype.getConnectionAreas = function (id/*, isEnd, connectionMetaInfo*/) {
-        var result = [],
+        let result = [],
             LEN = 20, // length of stem that can stick out of the connector before connections can turn
             ANGLES = [180, 0, 270, 90], // L, R, T, B
             gmeID = this._metaInfo[CONSTANTS.GME_ID],
@@ -232,10 +244,10 @@ define([
             isTypePlace = this.TYPE_INFO.isPlace(gmeID);
 
         //by default return the bounding box edges midpoints
-        if(isTypeTransition || isTypePlace){
+        if (isTypeTransition || isTypePlace) {
             if (id === undefined || id === this.hostDesignerItem.id) {
 
-                for (var i = 0; i < ANGLES.length; i++) {
+                for (let i = 0; i < ANGLES.length; i++) {
 
                     result.push({
                         "id": i,
@@ -319,5 +331,4 @@ define([
     };
 
     return PetriNetsDecoratorCore;
-})
-;
+});

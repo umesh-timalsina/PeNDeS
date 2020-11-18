@@ -25,6 +25,15 @@ define([], function () {
         return metaTypes;
     };
 
+    const getChildrenOfType = (node, type) => {
+        const metaNodeId = getMetaTypes()[type];
+        if (metaNodeId) {
+            return node.getChildrenIds().filter(id => {
+                return client.isTypeOf(id, metaNodeId);
+            }).map(id => client.getNode(id));
+        }
+    };
+
     const getMetaTypesInfo = function () {
         const TYPE_INFO = {};
 
@@ -38,7 +47,7 @@ define([], function () {
 
     const getMetaTypeOf = function (gmeID) {
         const node = client.getNode(gmeID);
-        if(node){
+        if (node) {
             return client.getNode(node.getMetaTypeId()).getAttribute('name');
         }
     }
@@ -47,6 +56,7 @@ define([], function () {
         getMetaTypes: getMetaTypes,
         getDecoratedMetaTypes: getDecoratedMetaTypes,
         getMetaTypesInfo: getMetaTypesInfo,
-        getMetaTypeOf: getMetaTypeOf
+        getMetaTypeOf: getMetaTypeOf,
+        getChildrenOfType: getChildrenOfType
     };
 });
