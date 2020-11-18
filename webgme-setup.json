@@ -7,9 +7,15 @@
       "project": {
         "src": "src/seeds/project"
       }
+    },
+    "decorators": {
+      "PetriNetsDecorator": {
+        "src": "src/decorators/PetriNetsDecorator"
+      }
     }
   },
   "dependencies": {
-    "seeds": {}
+    "seeds": {},
+    "decorators": {}
   }
 }
