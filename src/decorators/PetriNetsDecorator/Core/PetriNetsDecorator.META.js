@@ -1,4 +1,4 @@
-/* globals define, _, WebGMEGlobal */
+/* globals define, WebGMEGlobal */
 /*
  * Copyright (C) 2020 Vanderbilt University, All rights reserved.
  *
@@ -50,7 +50,7 @@ define([], function () {
         if (node) {
             return client.getNode(node.getMetaTypeId()).getAttribute('name');
         }
-    }
+    };
 
     return {
         getMetaTypes: getMetaTypes,

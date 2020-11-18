@@ -1,4 +1,4 @@
-/*globals define, _, DEBUG, $*/
+/*globals define, _*/
 /*eslint-env browser*/
 
 /**
@@ -11,21 +11,20 @@ define([
     'js/NodePropertyNames',
     '../Core/PetriNetsDecorator.Core',
     'js/Widgets/PartBrowser/PartBrowserWidget.DecoratorBase',
-    'js/Widgets/DiagramDesigner/DiagramDesignerWidget.Constants',
     'css!./PetriNetsDecorator.PartBrowserWidget.css'
-], function (CONSTANTS,
-             nodePropertyNames,
-             PetriNetsDecoratorCore,
-             PartBrowserWidgetDecoratorBase,
-             DiagramDesignerWidgetConstants,
-             PetriNetsDecoratorDiagramDesignerWidgetTemplate) {
+], function (
+    CONSTANTS,
+    nodePropertyNames,
+    PetriNetsDecoratorCore,
+    PartBrowserWidgetDecoratorBase,
+) {
 
     'use strict';
 
-    var DECORATOR_ID = 'PetriNetsDecoratorPartBrowserWidget';
+    const DECORATOR_ID = 'PetriNetsDecoratorPartBrowserWidget';
 
     function PetriNetsDecoratorPartBrowserWidget(options) {
-        var opts = _.extend({}, options);
+        const opts = _.extend({}, options);
 
         PartBrowserWidgetDecoratorBase.apply(this, [opts]);
         this.logger.debug('PetriNetsDecoratorPartBrowserWidget ctor');
@@ -41,7 +40,7 @@ define([
 
     PetriNetsDecoratorPartBrowserWidget.prototype.beforeAppend = function () {
         this.$el = this.$DOMBase.clone();
-        this.skinParts.$name = this.$el.find('.name');
+        this.skinParts.$textInfo = this.$el.find('.name');
         this._renderContent();
     };
 
@@ -51,7 +50,6 @@ define([
     /**** Override from ModelDecoratorCore ****/
     PetriNetsDecoratorPartBrowserWidget.prototype._registerForNotification = function(portId) {
         var partId = this._metaInfo[CONSTANTS.GME_ID];
-
         this._control.registerComponentIDForPartID(portId, partId);
     };
 

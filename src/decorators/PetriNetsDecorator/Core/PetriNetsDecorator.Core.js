@@ -4,8 +4,12 @@
  * Authors:
  * Umesh Timalsina
  */
-/* globals define, $, _*/
+/* globals define, $, DEBUG*/
 /* eslint-env broswser */
+/* Notes
+ * The _updatePorts and getConnectionAreas functions are copied from
+ * https://github.com/webgme/petri-net
+ */
 'use strict';
 
 define([
@@ -62,14 +66,13 @@ define([
                     .done(data => {
                         svgCache[metaType] = $(data.childNodes[0]);
                     }).fail(() => {
-                });
+                    });
             });
         }
     };
 
     PetriNetsDecoratorCore.prototype.getSVGByMetaType = function (gmeID) {
         const metaName = PetriNetsDecoratorMETA.getMetaTypeOf(gmeID);
-        const isPlace = this.TYPE_INFO.isPlace(gmeID);
         if (svgCache[metaName]) {
             return svgCache[metaName].clone();
         }
@@ -80,7 +83,7 @@ define([
         return errorSVGTemplate.clone();
     };
 
-    PetriNetsDecoratorCore.prototype.doSearch = function (searchDesc) {
+    PetriNetsDecoratorCore.prototype.doSearch = function (/*searchDesc*/) {
         return false;
     };
 
@@ -96,6 +99,7 @@ define([
             this.$el.find('.svg-container').empty();
 
             this.skinParts.$svg = this.getSVGByMetaType(node.getId());
+
             if (this.TYPE_INFO.isPlace(node.getId())) {
                 this.appendMarkingSVGs();
             }
@@ -121,13 +125,13 @@ define([
     };
 
     PetriNetsDecoratorCore.prototype._update = function () {
-        this._updateName();
+        this._updateTextInfo();
         this._updatePorts();
     };
 
-    PetriNetsDecoratorCore.prototype._updateName = function () {
+    PetriNetsDecoratorCore.prototype._updateTextInfo = function () {
         const node = this.getCurrentNode();
-        if (node && this.skinParts.$name) {
+        if (node && this.skinParts.$textInfo) {
             let name;
             if (this.TYPE_INFO.isPlace(node.getId())) {
                 name = node.getAttribute('name') + ' - ' + node.getAttribute('marking');
@@ -137,7 +141,7 @@ define([
 
                 if (places) {
                     places.forEach(place => {
-                        name += place.getAttribute('name') + '-' + place.getAttribute('marking') + ' '
+                        name += place.getAttribute('name') + '-' + place.getAttribute('marking') + ' ';
                     });
                 }
             } else {
@@ -173,27 +177,27 @@ define([
             // positioning the connectors' connection areas
             // LEFT
             this._connectionAreas[0] = {
-                "x1": FIXTURE,
-                "y1": SVGHeight / 2
-            }
+                'x1': FIXTURE,
+                'y1': SVGHeight / 2
+            };
             // RIGHT
             this._connectionAreas[1] = {
-                "x1": SVGWidth + FIXTURE,
-                "y1": SVGHeight / 2
-            }
+                'x1': SVGWidth + FIXTURE,
+                'y1': SVGHeight / 2
+            };
 
             if (isTypePlace) {
 
                 // TOP
                 this._connectionAreas[2] = {
-                    "x1": SVGWidth / 2,
-                    "y1": 0
-                }
+                    'x1': SVGWidth / 2,
+                    'y1': 0
+                };
                 // BOTTOM
                 this._connectionAreas[3] = {
-                    "x1": SVGWidth / 2,
-                    "y1": SVGHeight
-                }
+                    'x1': SVGWidth / 2,
+                    'y1': SVGHeight
+                };
             }
 
             while (len--) {
@@ -222,7 +226,7 @@ define([
                     if (this.hostDesignerItem) {
                         this.hostDesignerItem.registerConnectors(connectorE);
                     } else {
-                        this.logger.error("Decorator's hostDesignerItem is not set");
+                        this.logger.error('Decorator\'s hostDesignerItem is not set');
                     }
 
                     this.skinParts.$connectorContainer.append(connectorE);
@@ -250,14 +254,14 @@ define([
                 for (let i = 0; i < ANGLES.length; i++) {
 
                     result.push({
-                        "id": i,
-                        "x1": this._connectionAreas[i].x1, // x's and y's determine the lines where connections can be drawn on
-                        "y1": this._connectionAreas[i].y1,
-                        "x2": this._connectionAreas[i].x1,
-                        "y2": this._connectionAreas[i].y1,
-                        "angle1": ANGLES[i], // angles determine from which direction between two angles connections can be drawn
-                        "angle2": ANGLES[i],
-                        "len": LEN
+                        'id': i,
+                        'x1': this._connectionAreas[i].x1, // x's and y's determine the lines where connections can be drawn on
+                        'y1': this._connectionAreas[i].y1,
+                        'x2': this._connectionAreas[i].x1,
+                        'y2': this._connectionAreas[i].y1,
+                        'angle1': ANGLES[i], // angles determine from which direction between two angles connections can be drawn
+                        'angle2': ANGLES[i],
+                        'len': LEN
                     });
 
                     if (isTypeTransition && i === 1) {
@@ -268,18 +272,6 @@ define([
         }
 
         return result;
-    };
-
-    PetriNetsDecoratorCore.prototype._renderMetaTypeSpecificParts = function () {
-
-    };
-
-    PetriNetsDecoratorCore.prototype._registerForNotification = function (portId) {
-
-    };
-
-    PetriNetsDecoratorCore.prototype._unregisterForNotification = function (portId) {
-
     };
 
     PetriNetsDecoratorCore.prototype.appendMarkingSVGs = function () {

@@ -8,14 +8,18 @@ define([
     'js/Decorators/DecoratorBase',
     './DiagramDesigner/PetriNetsDecorator.DiagramDesignerWidget',
     './PartBrowser/PetriNetsDecorator.PartBrowserWidget'
-], function (DecoratorBase, PetriNetsDecoratorDiagramDesignerWidget, PetriNetsDecoratorPartBrowserWidget) {
+], function (
+    DecoratorBase,
+    PetriNetsDecoratorDiagramDesignerWidget,
+    PetriNetsDecoratorPartBrowserWidget
+) {
 
     'use strict';
 
-    var DECORATOR_ID = 'PetriNetsDecorator';
+    const DECORATOR_ID = 'PetriNetsDecorator';
 
     function PetriNetsDecorator(params) {
-        var opts = _.extend({loggerName: this.DECORATORID}, params);
+        const opts = _.extend({loggerName: this.DECORATORID}, params);
 
         DecoratorBase.apply(this, [opts]);
 
