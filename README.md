@@ -1,6 +1,7 @@
 # PenDeS
 [![GitHub Super-Linter](https://github.com/umesh-timalsina/PeNDeS/workflows/Lint%20Code%20Base/badge.svg?branch=main
 )](https://github.com/marketplace/actions/super-linter)
+![Tests](https://github.com/umesh-timalsina/PeNDeS/workflows/Tests/badge.svg?branch=main)
 ## Installation
 First, install the PenDeS following:
 - [NodeJS](https://nodejs.org/en/) (LTS recommended)
