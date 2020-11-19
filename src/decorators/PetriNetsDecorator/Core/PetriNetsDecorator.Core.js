@@ -49,9 +49,7 @@ define([
 
     PetriNetsDecoratorCore.prototype._initializeDecorator = function (params) {
         this.TYPE_INFO = PetriNetsDecoratorMETA.getMetaTypesInfo();
-        this.META_TYPES = PetriNetsDecoratorMETA.getMetaTypes();
         this.DECORATED_META_TYPES = PetriNetsDecoratorMETA.getDecoratedMetaTypes();
-        this.$name = undefined;
         this._displayConnectors = false;
 
         if (params && params.connectors) {
@@ -94,8 +92,7 @@ define([
                 this.$el.attr({'data-id': node.getId()});
             }
 
-            this.skinParts.$name = this.$el.find('.name');
-
+            this.skinParts.$textInfo = this.$el.find('.name');
             this.$el.find('.svg-container').empty();
 
             this.skinParts.$svg = this.getSVGByMetaType(node.getId());
@@ -148,7 +145,7 @@ define([
                 name = node.getAttribute('name');
             }
 
-            this.skinParts.$name.text(name);
+            this.skinParts.$textInfo.text(name);
         }
     };
 
