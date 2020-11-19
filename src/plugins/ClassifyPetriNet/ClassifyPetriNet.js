@@ -19,12 +19,6 @@ define([
     'use strict';
 
     pluginMetadata = JSON.parse(pluginMetadata);
-    const PETRI_NET_CLASSES = {
-        FF_NET: 'Free Choice Petri Net',
-        STATE_MACHINE: 'State Machine',
-        MARKED_GRAPH: 'Marked Graph',
-        WF_NET: 'Workflow Net'
-    };
 
     const NAMESPACE = 'petrinets';
 
@@ -59,7 +53,7 @@ define([
             const {places, transitions} = await this._getPetriNetMap(petriNet);
             const isStateMachine = this._isStateMachine(transitions);
             const isMarkedGraph = this._isMarkedGraph(places);
-            const isFreeChoicePetriNet = this._isFreeChoicePetriNet(places, transitions);
+            const isFreeChoicePetriNet = this._isFreeChoicePetriNet(transitions);
             const isWorkFlowNet = this._isWorkFlowNet(places, transitions);
             return {
                 isStateMachine,
@@ -107,8 +101,14 @@ define([
             return {places, transitions};
         }
 
-        _isFreeChoicePetriNet(places, transitions) {
-            return false;
+        _isFreeChoicePetriNet(transitions) {
+            const allInPlaces = new Set();
+            let size = 0;
+            Object.values(transitions).forEach(transition => {
+                transition.inPlaces.forEach(inPlace => allInPlaces.add(inPlace));
+                size += transition.inPlaces.size;
+            });
+            return size === allInPlaces.size;
         }
 
         _isStateMachine(transitions) {
@@ -126,10 +126,9 @@ define([
             });
         }
 
-        _isWorkFlowNet(places, transitions) {
+        _isWorkFlowNet(/*places, transitions*/) {
             return false;
         }
-
     }
 
     return ClassifyPetriNet;
