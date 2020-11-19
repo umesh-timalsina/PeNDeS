@@ -22,6 +22,8 @@ define([], function () {
         const metaTypes = getMetaTypes();
         delete metaTypes.T2P;
         delete metaTypes.P2T;
+        delete metaTypes.Arc;
+        delete metaTypes.PetriNets;
         return metaTypes;
     };
 
