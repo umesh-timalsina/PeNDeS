@@ -12,10 +12,17 @@
       "PetriNetsDecorator": {
         "src": "src/decorators/PetriNetsDecorator"
       }
+    },
+    "plugins": {
+      "ClassifyPetriNet": {
+        "src": "src/plugins/ClassifyPetriNet",
+        "test": "test/plugins/ClassifyPetriNet"
+      }
     }
   },
   "dependencies": {
     "seeds": {},
-    "decorators": {}
+    "decorators": {},
+    "plugins": {}
   }
 }
