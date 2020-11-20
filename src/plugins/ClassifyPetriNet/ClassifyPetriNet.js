@@ -191,7 +191,8 @@ define([
             if (sourcePlaces.length === 1 && sinkPlaces.length === 1) {
                 const src = sourcePlaces.pop();
                 const dst = sinkPlaces.pop();
-                let allPaths = this._getPaths(src, dst, paths).flat();
+                let allPaths = this._getPaths(src, dst, paths)
+                    .reduce((flattened, element) => flattened.concat(element), []);
                 isWorkFlowNet = allNodes.every(node => allPaths.includes(node));
             }
             return isWorkFlowNet;
