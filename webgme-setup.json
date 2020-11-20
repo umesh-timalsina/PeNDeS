@@ -6,6 +6,9 @@
       },
       "project": {
         "src": "src/seeds/project"
+      },
+      "test": {
+        "src": "src/seeds/test"
       }
     },
     "decorators": {

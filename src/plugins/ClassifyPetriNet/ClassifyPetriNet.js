@@ -19,6 +19,42 @@ define([
     'use strict';
 
     pluginMetadata = JSON.parse(pluginMetadata);
+    const PETRI_NET_CLASSES = {
+        FREE_CHOICE_PETRINET: 'Free Choice PetriNet',
+        STATE_MACHINE: 'State Machine',
+        MARKED_GRAPH: 'Marked Graph',
+        WORKFLOW_NET: 'Workflow Net',
+        POSITIVE_MSG: 'This PetriNet is a',
+        NEGATIVE_MSG: 'This PetriNet is not a'
+    };
+    const getPetriNetMessages = function (classifications) {
+        let msgs = [];
+        if (classifications.isFreeChoicePetriNet) {
+            msgs.push(PETRI_NET_CLASSES.POSITIVE_MSG + ' ' + PETRI_NET_CLASSES.FREE_CHOICE_PETRINET);
+        } else {
+            msgs.push(PETRI_NET_CLASSES.NEGATIVE_MSG + ' ' + PETRI_NET_CLASSES.FREE_CHOICE_PETRINET);
+        }
+
+        if (classifications.isStateMachine) {
+            msgs.push(PETRI_NET_CLASSES.POSITIVE_MSG + ' ' + PETRI_NET_CLASSES.STATE_MACHINE);
+        } else {
+            msgs.push(PETRI_NET_CLASSES.NEGATIVE_MSG + ' ' + PETRI_NET_CLASSES.STATE_MACHINE);
+        }
+
+        if (classifications.isMarkedGraph) {
+            msgs.push(PETRI_NET_CLASSES.POSITIVE_MSG + ' ' + PETRI_NET_CLASSES.MARKED_GRAPH);
+        } else {
+            msgs.push(PETRI_NET_CLASSES.NEGATIVE_MSG + ' ' + PETRI_NET_CLASSES.MARKED_GRAPH);
+        }
+
+        if (classifications.isWorkFlowNet) {
+            msgs.push(PETRI_NET_CLASSES.POSITIVE_MSG + ' ' + PETRI_NET_CLASSES.WORKFLOW_NET);
+        } else {
+            msgs.push(PETRI_NET_CLASSES.NEGATIVE_MSG + ' ' + PETRI_NET_CLASSES.WORKFLOW_NET);
+        }
+
+        return msgs;
+    };
 
     const NAMESPACE = 'petrinets';
 
@@ -40,7 +76,16 @@ define([
                     throw new Error('Active node is not of type PetriNet');
                 }
 
-                await this.classifyPetriNet(activeNode);
+                const classifications = await this.classifyPetriNet(activeNode);
+                const messages = getPetriNetMessages(classifications);
+                messages.forEach(msg => {
+                    this.createMessage(
+                        activeNode,
+                        msg,
+                        'info'
+                    );
+                });
+
                 this.result.setSuccess(true);
             } catch (e) {
                 this.logger.error(e.message);
@@ -50,11 +95,11 @@ define([
         }
 
         async classifyPetriNet(petriNet) {
-            const {places, transitions} = await this._getPetriNetMap(petriNet);
+            const {places, transitions, paths} = await this._getPetriNetMap(petriNet);
             const isStateMachine = this._isStateMachine(transitions);
             const isMarkedGraph = this._isMarkedGraph(places);
             const isFreeChoicePetriNet = this._isFreeChoicePetriNet(transitions);
-            const isWorkFlowNet = this._isWorkFlowNet(places, transitions);
+            const isWorkFlowNet = this._isWorkFlowNet(places, transitions, paths);
             return {
                 isStateMachine,
                 isMarkedGraph,
@@ -67,20 +112,24 @@ define([
             const children = await this.core.loadChildren(petriNet);
             const places = {};
             const transitions = {};
+            const paths = {};
             children.forEach(child => {
                 const name = this.core.getAttribute(child, 'name');
+                const path = this.core.getPath(child);
                 if (this.core.getMetaType(child) === this.META.Place) {
-                    places[this.core.getPath(child)] = {
+                    places[path] = {
                         name: name,
                         inTransitions: new Set(),
                         outTransitions: new Set()
                     };
+                    paths[path] = [];
                 } else if (this.core.getMetaType(child) === this.META.Transition) {
-                    transitions[this.core.getPath(child)] = {
+                    transitions[path] = {
                         name: name,
                         inPlaces: new Set(),
                         outPlaces: new Set()
                     };
+                    paths[path] = [];
                 }
             });
 
@@ -90,15 +139,17 @@ define([
                     const dstTransitionPath = this.core.getPointerPath(child, 'dst');
                     places[inPlacePath].outTransitions.add(dstTransitionPath);
                     transitions[dstTransitionPath].inPlaces.add(inPlacePath);
+                    paths[inPlacePath].push(dstTransitionPath);
                 } else if (this.core.getMetaType(child) === this.META.T2P) {
                     const outPlacePath = this.core.getPointerPath(child, 'dst');
                     const srcTransitionPath = this.core.getPointerPath(child, 'src');
                     places[outPlacePath].inTransitions.add(srcTransitionPath);
                     transitions[srcTransitionPath].outPlaces.add(outPlacePath);
+                    paths[srcTransitionPath].push(outPlacePath);
                 }
             });
 
-            return {places, transitions};
+            return {places, transitions, paths};
         }
 
         _isFreeChoicePetriNet(transitions) {
@@ -126,9 +177,50 @@ define([
             });
         }
 
-        _isWorkFlowNet(/*places, transitions*/) {
-            return false;
+        _isWorkFlowNet(places, transitions, paths) {
+            const allNodes = Object.keys(places).concat(Object.keys(transitions));
+            const sourcePlaces = Object.keys(places).filter(placeId => {
+                return places[placeId].inTransitions.size === 0;
+            });
+            const sinkPlaces = Object.keys(places).filter(placeId => {
+                return places[placeId].outTransitions.size === 0;
+            });
+
+            let isWorkFlowNet = false;
+
+            if (sourcePlaces.length === 1 && sinkPlaces.length === 1) {
+                const src = sourcePlaces.pop();
+                const dst = sinkPlaces.pop();
+                let allPaths = this._getPaths(src, dst, paths).flat();
+                isWorkFlowNet = allNodes.every(node => allPaths.includes(node));
+            }
+            return isWorkFlowNet;
         }
+
+        _getPaths(src, dst, paths) {
+            return ClassifyPetriNet._getAllPaths(paths, src, dst, []);
+        }
+
+        static _getAllPaths(graph, start, end, path = []) {
+            path = path.concat([start]);
+            if (start === end) {
+                return [path];
+            }
+            if (!graph[start]) {
+                return [];
+            }
+            const paths = [];
+            graph[start].forEach(node => {
+                if (!path.includes(node)) {
+                    const newPaths = ClassifyPetriNet._getAllPaths(graph, node, end, path);
+                    newPaths.forEach(newPath => {
+                        paths.push(newPath);
+                    });
+                }
+            });
+            return paths;
+        }
+
     }
 
     return ClassifyPetriNet;

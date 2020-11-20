@@ -11,6 +11,7 @@ config.plugin.basePaths.push(__dirname + '/../src/plugins');
 config.visualization.decoratorPaths.push(__dirname + '/../src/decorators');
 config.seedProjects.basePaths.push(__dirname + '/../src/seeds/petrinets');
 config.seedProjects.basePaths.push(__dirname + '/../src/seeds/project');
+config.seedProjects.basePaths.push(__dirname + '/../src/seeds/test');
 
 
 
