@@ -6,16 +6,26 @@
       },
       "project": {
         "src": "src/seeds/project"
+      },
+      "test": {
+        "src": "src/seeds/test"
       }
     },
     "decorators": {
       "PetriNetsDecorator": {
         "src": "src/decorators/PetriNetsDecorator"
       }
+    },
+    "plugins": {
+      "ClassifyPetriNet": {
+        "src": "src/plugins/ClassifyPetriNet",
+        "test": "test/plugins/ClassifyPetriNet"
+      }
     }
   },
   "dependencies": {
     "seeds": {},
-    "decorators": {}
+    "decorators": {},
+    "plugins": {}
   }
 }

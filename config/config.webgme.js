@@ -7,9 +7,11 @@ var config = require('webgme/config/config.default'),
     validateConfig = require('webgme/config/validator');
 
 // The paths can be loaded from the webgme-setup.json
+config.plugin.basePaths.push(__dirname + '/../src/plugins');
 config.visualization.decoratorPaths.push(__dirname + '/../src/decorators');
 config.seedProjects.basePaths.push(__dirname + '/../src/seeds/petrinets');
 config.seedProjects.basePaths.push(__dirname + '/../src/seeds/project');
+config.seedProjects.basePaths.push(__dirname + '/../src/seeds/test');
 
 
 
