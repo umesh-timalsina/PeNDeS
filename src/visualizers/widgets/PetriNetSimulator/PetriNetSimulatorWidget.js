@@ -31,7 +31,6 @@ define([
         this.$modalEl.on('hidden.bs.modal', () => {
             this.$modalEl.find('.plugin-messages').empty();
         });
-        this.drawOnlyDashboard();
     };
 
     PetriNetSimulatorWidget.prototype._initDashboardEvents = function () {
@@ -87,9 +86,6 @@ define([
         if (desc) {
             this._currentGraph = desc;
             this.drawGraph(desc.links);
-        } else {
-            console.log('here');
-            this.drawOnlyDashboard();
         }
     };
 
@@ -115,7 +111,6 @@ define([
         this._el.empty();
         this.dashBoard = new JointJSDashboard({target: this._el[0]});
         this._initDashboardEvents();
-        this.dashBoard.onDidResize(this.currentWidth, this.currentHeight);
         this._el.height(this.currentWidth);
         this._el.width(this.currentHeight);
     };
