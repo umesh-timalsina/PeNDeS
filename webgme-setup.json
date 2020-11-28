@@ -21,11 +21,21 @@
         "src": "src/plugins/ClassifyPetriNet",
         "test": "test/plugins/ClassifyPetriNet"
       }
+    },
+    "visualizers": {
+      "PetriNetSimulator": {
+        "src": "panels/PetriNetSimulator/PetriNetSimulatorPanel",
+        "title": "PetriNetSimulator",
+        "panel": "src/visualizers/panels/PetriNetSimulator",
+        "secondary": false,
+        "widget": "src/visualizers/widgets/PetriNetSimulator"
+      }
     }
   },
   "dependencies": {
     "seeds": {},
     "decorators": {},
-    "plugins": {}
+    "plugins": {},
+    "visualizers": {}
   }
 }

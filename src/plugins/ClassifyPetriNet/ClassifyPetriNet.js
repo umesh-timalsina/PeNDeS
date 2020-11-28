@@ -76,6 +76,9 @@ define([
                     throw new Error('Active node is not of type PetriNet');
                 }
 
+                if((await this.core.loadChildren(activeNode)).length === 0){
+                    throw new Error('No child nodes are available');
+                }
                 const classifications = await this.classifyPetriNet(activeNode);
                 const messages = getPetriNetMessages(classifications);
                 messages.forEach(msg => {
@@ -90,6 +93,11 @@ define([
             } catch (e) {
                 this.logger.error(e.message);
                 this.result.setSuccess(false);
+                this.createMessage(
+                    activeNode,
+                    e.message,
+                    'error'
+                );
             }
             callback(null, this.result);
         }

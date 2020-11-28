@@ -1,1 +1,8 @@
-[]
+[
+  {
+    "id": "PetriNetSimulator",
+    "title": "PetriNetSimulator",
+    "panel": "panels/PetriNetSimulator/PetriNetSimulatorPanel",
+    "DEBUG_ONLY": false
+  }
+]

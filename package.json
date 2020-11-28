@@ -1,8 +1,11 @@
 {
   "name": "pendes",
   "scripts": {
+    "postinstall": "npm run build-svelte",
     "start": "node app.js",
     "test": "node ./node_modules/mocha/bin/mocha --recursive test",
+    "build-svelte": "rollup -c",
+    "watch-svelte": "rollup -c -w",
     "apply": "node ./node_modules/webgme-engine/src/bin/apply.js",
     "diff": "node ./node_modules/webgme-engine/src/bin/diff.js",
     "export": "node ./node_modules/webgme-engine/src/bin/export.js",
@@ -14,13 +17,24 @@
     "clean_up": "node ./node_modules/webgme-engine/src/bin/clean_up.js"
   },
   "version": "1.0.0",
-  "peerDependencies": {
-    "webgme": "^2.23.0"
-  },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^16.0.0",
+    "@rollup/plugin-node-resolve": "^10.0.0",
     "chai": "^4.2.0",
+    "eslint-plugin-svelte3": "^2.7.3",
     "mocha": "^5.2.0",
+    "rollup": "^2.3.4",
+    "rollup-plugin-css-only": "^3.0.0",
+    "rollup-plugin-livereload": "^2.0.0",
+    "rollup-plugin-svelte": "^7.0.0",
+    "rollup-plugin-terser": "^7.0.0",
+    "svelte": "^3.0.0",
     "webgme": "^2.42.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "jointjs": "^3.2.0",
+    "lodash": "^4.17.11",
+    "dagre": "^0.8.5",
+    "graphlib": "^2.1.8"
+  }
 }
