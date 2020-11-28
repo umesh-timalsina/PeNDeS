@@ -44,7 +44,7 @@ define([
                 'onResetClicked',
                 () => {
                     if (this._currentGraph) {
-                        this.drawGraph(this._currentGraph.links);
+                        this.drawGraph(this._currentGraph.links, this._currentGraph.name);
                     }
                 }
             );
@@ -85,7 +85,7 @@ define([
     PetriNetSimulatorWidget.prototype.addNode = function (desc) {
         if (desc) {
             this._currentGraph = desc;
-            this.drawGraph(desc.links);
+            this.drawGraph(desc.links, desc.name);
         }
     };
 
@@ -99,11 +99,11 @@ define([
         this.addNode(desc);
     };
 
-    PetriNetSimulatorWidget.prototype.drawGraph = function (links) {
+    PetriNetSimulatorWidget.prototype.drawGraph = function (links, title) {
         this._el.empty();
         this.dashBoard = new JointJSDashboard({target: this._el[0]});
         this._initDashboardEvents();
-        this.dashBoard.buildGraph(links);
+        this.dashBoard.buildGraph(links, title);
         this.dashBoard.onDidResize(this.currentWidth, this.currentHeight);
     };
 

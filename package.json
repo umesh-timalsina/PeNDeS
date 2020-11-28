@@ -17,9 +17,6 @@
     "clean_up": "node ./node_modules/webgme-engine/src/bin/clean_up.js"
   },
   "version": "1.0.0",
-  "peerDependencies": {
-    "webgme": "^2.23.0"
-  },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^16.0.0",
     "@rollup/plugin-node-resolve": "^10.0.0",

@@ -12,14 +12,14 @@
         paperWidth,
         paperHeight,
         existingTransitions,
-        isFireable;
+        isFireable, graphTitle;
 
     const ENABLED_TRANSITION_ATTR = 'green',
         DISABLED_TRANSITION_ATTR = 'red';
 
 
     onMount(() => {
-        defineCustomPlace();
+        defineCustomPetriNetShapes();
         graph = getGraph();
         paper = getPaper();
         existingTransitions = {};
@@ -36,23 +36,25 @@
                     const outBoundLinks = graph.getConnectedLinks(el, {
                         outbound: true
                     });
+                    const inBoundLinks = graph.getConnectedLinks(el, {
+                        inbound: true
+                    });
+
                     outBoundLinks.forEach(link => {
                         tokenLinks.push(link);
-                        const dst = link.getTargetElement();
-                        const srcTransition = link.getSourceElement();
-                        const inPlaces = graph.getConnectedLinks(srcTransition, {
-                            inbound: true
-                        }).map(link => {
-                            tokenLinks.push(link);
-                            return link.getSourceElement();
-                        });
-
-                        const dstMarkingCount = +dst.attr('label/text');
-                        dst.attr('label/text', dstMarkingCount + 1);
-                        inPlaces.forEach(place => {
-                            const srcMarkingCount = +place.attr('label/text');
-                            place.attr('label/text', srcMarkingCount - 1);
-                        });
+                        const dstPlace = link.getTargetElement();
+                        if (dstPlace) {
+                            const tgtMarking = +dstPlace.attr('label/text');
+                            dstPlace.attr('label/text', tgtMarking + 1);
+                        }
+                    });
+                    inBoundLinks.forEach(link => {
+                        tokenLinks.push(link);
+                        const srcPlace = link.getSourceElement();
+                        if (srcPlace) {
+                            const srcMarking = +srcPlace.attr('label/text');
+                            srcPlace.attr('label/text', srcMarking - 1);
+                        }
                     });
                     sendToken(tokenLinks);
                     highlightEnabledTransitions();
@@ -65,7 +67,7 @@
         links.forEach(link => {
             link.findView(paper).sendToken(
                 joint.V('circle', {r: 5, fill: '#FFDF00'}),
-                {duration: 1000}
+                {duration: 500}
             );
         });
     }
@@ -91,11 +93,54 @@
         return paper;
     }
 
-    function defineCustomPlace() {
+    function defineCustomPetriNetShapes() {
         joint.shapes.petrinets = {};
-        joint.shapes.petrinets.Place = joint.shapes.standard.Circle;
+        joint.shapes.petrinets.Place = getPlaceDefinition();
         joint.shapes.petrinets.Transition = joint.shapes.standard.Rectangle;
         joint.shapes.petrinets.Link = joint.shapes.standard.Link;
+    }
+
+    function getPlaceDefinition() {
+        return joint.dia.Element.define('petrinets.Place', {
+            attrs: {
+                body: {
+                    refCx: '50%',
+                    refCy: '50%',
+                    refR: '50%',
+                    strokeWidth: 2,
+                    stroke: '#333333',
+                    fill: '#FFFFFF'
+                },
+                label: {
+                    textVerticalAnchor: 'middle',
+                    textAnchor: 'middle',
+                    refX: '50%',
+                    refY: '50%',
+                    fontSize: 14,
+                    fill: '#333333'
+                },
+                title: {
+                    textVerticalAnchor: 'middle',
+                    textAnchor: 'middle',
+                    refX: '50%',
+                    refY: '-20%',
+                    fontSize: 14,
+                    fill: '#333333',
+                    text: ''
+                }
+            }
+        }, {
+            markup: [{
+                tagName: 'circle',
+                selector: 'body'
+            }, {
+                tagName: 'text',
+                selector: 'label'
+            }, {
+                tagName: 'text',
+                selector: 'title'
+            }]
+        });
     }
 
     function onClassifyClicked() {
@@ -117,6 +162,7 @@
         }).resize(50, 50);
 
         p.attr('label/text', place.markings);
+        p.attr('title/text', place.name);
         existingPlaces[place.id] = p;
         return p;
     }
@@ -174,16 +220,17 @@
                 const links = graph.getConnectedLinks(element, {
                     inbound: true
                 });
-
+                let isEnabled = true;
                 links.forEach(link => {
                     const src = link.getSourceElement();
                     if (src && +src.attr('label/text') > 0) {
-                        enabledCount += 1;
                         element.attr('body/stroke', ENABLED_TRANSITION_ATTR);
                     } else if (src) {
+                        isEnabled = false;
                         element.attr('body/stroke', DISABLED_TRANSITION_ATTR);
                     }
                 });
+                enabledCount = isEnabled ? enabledCount + 1 : enabledCount;
             }
         });
         isFireable = enabledCount > 0;
@@ -208,8 +255,9 @@
         }
     }
 
-    export function buildGraph(links) {
+    export function buildGraph(links, title) {
         removeGraph();
+        graphTitle = title;
         Object.values(links).forEach(link => {
             let place, transition, arrow;
             if (link.src.type === 'Place') {
@@ -239,6 +287,12 @@
                 <button class="navbar-brand btn-clear" disabled>Petri Net Simulator</button>
             </div>
             <div class="collapse navbar-collapse">
+                <div class="navbar-left">
+                    <ul class="nav navbar-nav">
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">{graphTitle}</a></li>
+                    </ul>
+                </div>
                 <div class="navbar-right">
                     <button type="button"
                             on:click|stopPropagation|preventDefault={onClassifyClicked}

@@ -2,12 +2,10 @@
 define([
     'js/Constants',
     'js/Utils/GMEConcepts',
-    'js/NodePropertyNames',
     'q'
 ], function (
     CONSTANTS,
     GMEConcepts,
-    nodePropertyNames,
     Q
 ) {
 
@@ -87,6 +85,7 @@ define([
             if (type === 'PetriNet') {
                 desc = {
                     id: node.getId(),
+                    name: node.getAttribute('name'),
                     links: {}
                 };
                 const childrenIds = node.getChildrenIds();
