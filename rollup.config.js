@@ -28,7 +28,6 @@ function serve() {
 
 export default {
 	input: `${JOINT_DASHBOARD_ROOT}/src/JointDashboard.svelte`,
-    external: ['showdown'],
 	output: {
 		sourcemap: true,
 		format: 'amd',
