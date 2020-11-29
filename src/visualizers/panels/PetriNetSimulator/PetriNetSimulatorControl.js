@@ -90,9 +90,14 @@ define([
                 };
                 const childrenIds = node.getChildrenIds();
                 childrenIds.forEach(id => {
+                    const childNode = this._client.getNode(id);
+                    const type = this._client.getNode(childNode.getBaseId()).getAttribute('name');
+
+                    if (type === 'Documentation') {
+                        desc.doc = childNode.getAttribute('documentation');
+                    }
+
                     if (GMEConcepts.isConnection(id)) {
-                        const childNode = this._client.getNode(id);
-                        const type = this._client.getNode(childNode.getBaseId()).getAttribute('name');
                         const src = this._client.getNode(childNode.getPointerId('src'));
                         const dst = this._client.getNode(childNode.getPointerId('dst'));
                         if (type === 'P2T') {

@@ -6,6 +6,7 @@ var config = require('./config.webgme'),
 
 config.seedProjects.basePaths = ['src/seeds/project'];
 config.seedProjects.defaultProject = 'project';
+config.requirejsPaths.showdown = './node_modules/showdown/dist/showdown.min';
 
 validateConfig(config);
 module.exports = config;
