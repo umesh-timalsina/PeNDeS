@@ -28,7 +28,8 @@ $ npm start
 Finally, navigate to http://localhost:8888 for the design studio:
 
 ## Developers
-The [`JointJSDashboard`](./src/visualizers/widgets/PetriNetSimulator/JointJSDashboard) a [`svelte`](https://svelte.dev/) component. While debugging the `PetriNetSimulator` visualizer, it is recommended to run the `watch-svelte` `npm` script for tracking changes in the `svelte` component. To do a debug start, follow the installtion
+The [`JointJSDashboard`](./src/visualizers/widgets/PetriNetSimulator/JointJSDashboard) is a [`svelte`](https://svelte
+.dev/) component. While debugging the `PetriNetSimulator` visualizer, it is recommended to run the `watch-svelte` `npm` script for tracking changes in the `svelte` component. To do a debug start, follow the installtion
  instruction and in a separate terminal run `npm run watch-svelte`. 
 
 ## Components
@@ -56,15 +57,15 @@ A custom [decorator](./src/decorators/PetriNetsDecorator) decorates the composit
 ### Plugin
 The plugin [`ClassifyPetriNet`](./src/plugins/ClassifyPetriNet) is enabled by default in the `PetrinetNet` meta-node
 , which determines whether the `PetriNet` is a `Marked Graph`, `Free Choice Petrinet`, `State Machine` or `Workflow Net
-`. This plugin is called from the interpreter as well.
+`. This plugin is called from the simulator as well.
 
 ### Simulator
-The simulation for a Petri net is provided using `[PetriNetSimulator](./src/visualizers/widgets/PetriNetSimulator)` visualizer. The visualizer uses [`joint`](https://github.com/clientIO/joint), togehter with [`dagre`](https://github.com/dagrejs/dagre) and
+The simulation for a Petri net is provided using [`PetriNetSimulator`](./src/visualizers/widgets/PetriNetSimulator) visualizer. The visualizer uses [`joint`](https://github.com/clientIO/joint), togehter with [`dagre`](https://github.com/dagrejs/dagre) and
  [`graphlib`](https://github.com/dagrejs/graphlib) to autolayout the Petrinet graph
  for a `PetriNet` node from the metamodel, which can then be used to fire all the enabled transitions. An example
   animation is shown below.
 ![interpreter](./images/interpreter.gif)
 
 ## Known Issues
-1. For Decorator issues see #17.
+1. For Decorator issues see [#17](https://github.com/umesh-timalsina/issues/17).
 
