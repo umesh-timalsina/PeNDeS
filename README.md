@@ -29,8 +29,8 @@ Finally, navigate to http://localhost:8888 for the design studio:
 
 ## Developers
 The [`JointJSDashboard`](./src/visualizers/widgets/PetriNetSimulator/JointJSDashboard) is a
- [`svelte`](https://svelte.dev/) component. While debugging the `PetriNetSimulator` visualizer, it is recommended to run the `watch-svelte
-` `npm` script for tracking changes in the `svelte` component. For a debug start, follow the installation
+ [`svelte`](https://svelte.dev/) component. While debugging the `PetriNetSimulator` visualizer, 
+ it is recommended to run the `watch-svelte` `npm` script for tracking changes in the `svelte` component. For a debug start, follow the installation
  instructions and in a separate terminal run `npm run watch-svelte`. 
 
 ## Components
