@@ -88,6 +88,7 @@ define([
                     name: node.getAttribute('name'),
                     links: {}
                 };
+                let allNodes = new Set();
                 const childrenIds = node.getChildrenIds();
                 childrenIds.forEach(id => {
                     const childNode = this._client.getNode(id);
@@ -95,6 +96,7 @@ define([
 
                     if (type === 'Documentation') {
                         desc.doc = childNode.getAttribute('documentation');
+                        allNodes.add(id);
                     }
 
                     if (GMEConcepts.isConnection(id)) {
@@ -128,6 +130,26 @@ define([
                                     markings: +dst.getAttribute('marking')
                                 }
                             };
+                        }
+                        allNodes.add(src.getId());
+                        allNodes.add(dst.getId());
+                        allNodes.add(childNode.getId());
+                    }
+                });
+                childrenIds.forEach(id => {
+                    if (!allNodes.has(id)) {
+                        const extraNode = this._client.getNode(id);
+                        const type = this._client.getNode(extraNode.getBaseId()).getAttribute('name');
+                        if (type === 'Place' || type === 'Transition') {
+                            desc.extra = desc.extra ? desc.extra : {};
+                            desc.extra[id] = {
+                                id: id,
+                                type: type,
+                                name: extraNode.getAttribute('name'),
+                            };
+                            if (desc.extra[id].type === 'Place') {
+                                desc.extra[id].markings = extraNode.getAttribute('marking');
+                            }
                         }
                     }
                 });

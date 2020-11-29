@@ -223,16 +223,22 @@
                     inbound: true
                 });
                 let isEnabled = true;
+
+                if (links && links.length === 0 || !links) {
+                    isEnabled = false;
+                }
+
                 links.forEach(link => {
                     const src = link.getSourceElement();
-                    if (src && +src.attr('label/text') > 0) {
-                        element.attr('body/stroke', ENABLED_TRANSITION_ATTR);
-                    } else if (src) {
+                    if (src && +src.attr('label/text') <= 0) {
                         isEnabled = false;
-                        element.attr('body/stroke', DISABLED_TRANSITION_ATTR);
                     }
                 });
                 enabledCount = isEnabled ? enabledCount + 1 : enabledCount;
+                element.attr(
+                    'body/stroke',
+                    isEnabled ? ENABLED_TRANSITION_ATTR : DISABLED_TRANSITION_ATTR
+                );
             }
         });
         isFireable = enabledCount > 0;
@@ -257,11 +263,11 @@
         }
     }
 
-    export function buildGraph(links, title, doc) {
+    export function buildGraph(links, title, doc, extra) {
         removeGraph();
         graphTitle = title;
+        let place, transition, arrow;
         Object.values(links).forEach(link => {
-            let place, transition, arrow;
             if (link.src.type === 'Place') {
                 place = getPlace(link.src);
                 transition = getTransition(link.dst);
@@ -274,7 +280,19 @@
             graph.addCells([place, transition]);
             graph.addCell([arrow]);
         });
+
         relayout();
+        if (extra) {
+            Object.values(extra).forEach(pt => {
+                let cell;
+                if(pt.type === 'Place') {
+                    cell = getPlace(pt);
+                } if(pt.type === 'Transition') {
+                    cell = getTransition(pt);
+                }
+                graph.addCell([cell]);
+            });
+        }
         highlightEnabledTransitions();
         if (doc) {
             const converter = new showdown.Converter();
