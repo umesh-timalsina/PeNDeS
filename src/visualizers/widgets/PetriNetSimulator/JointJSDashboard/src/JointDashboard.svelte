@@ -19,6 +19,10 @@
     const ENABLED_TRANSITION_ATTR = 'green',
         DISABLED_TRANSITION_ATTR = 'red';
 
+    const LINK_COLORS = {
+        P2T: 'black',
+        T2P: 'blue'
+    };
 
     onMount(() => {
         defineCustomPetriNetShapes();
@@ -190,10 +194,11 @@
         return t;
     }
 
-    function getLink(src, dst) {
-        const l = new joint.shapes.standard.Link();
+    function getLink(src, dst, linkColor='black') {
+        const l = new joint.shapes.petrinets.Link();
         l.source(src);
         l.target(dst);
+        l.attr('line/stroke', linkColor);
         return l;
     }
 
@@ -271,11 +276,11 @@
             if (link.src.type === 'Place') {
                 place = getPlace(link.src);
                 transition = getTransition(link.dst);
-                arrow = getLink(place, transition);
+                arrow = getLink(place, transition, LINK_COLORS.P2T);
             } else if (link.src.type === 'Transition') {
                 place = getPlace(link.dst);
                 transition = getTransition(link.src);
-                arrow = getLink(transition, place);
+                arrow = getLink(transition, place, LINK_COLORS.T2P);
             }
             graph.addCells([place, transition]);
             graph.addCell([arrow]);
