@@ -1,4 +1,4 @@
-# PenDeS
+# PeNDeS
 [![GitHub Super-Linter](https://github.com/umesh-timalsina/PeNDeS/workflows/Lint%20Code%20Base/badge.svg?branch=main
 )](https://github.com/marketplace/actions/super-linter)
 ![Tests](https://github.com/umesh-timalsina/PeNDeS/workflows/Tests/badge.svg?branch=main)
@@ -55,7 +55,7 @@ A custom [decorator](./src/decorators/PetriNetsDecorator) decorates the composit
  
  ![decorator](./images/decorator.png)
 ### Plugin
-The plugin [`ClassifyPetriNet`](./src/plugins/ClassifyPetriNet) is enabled by default in the `PetrinetNet` meta-node
+The plugin [`ClassifyPetriNet`](./src/plugins/ClassifyPetriNet) is enabled by default in the `PetriNet` meta-node
 , which determines whether the `PetriNet` is a `Marked Graph`, `Free Choice Petrinet`, `State Machine` or `Workflow Net
 `. This plugin is called from the simulator as well.
 
