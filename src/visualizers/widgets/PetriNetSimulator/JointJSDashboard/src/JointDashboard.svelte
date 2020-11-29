@@ -1,6 +1,7 @@
 <script>
     import {onMount} from 'svelte';
     import 'jointjs/dist/joint.css';
+    import * as showdown from 'showdown';
     import * as dagre from 'dagre/dist/dagre.min';
     import * as graphlib from 'graphlib/dist/graphlib.min';
     import * as joint from 'jointjs/dist/joint';
@@ -12,7 +13,8 @@
         paperWidth,
         paperHeight,
         existingTransitions,
-        isFireable, graphTitle;
+        isFireable, graphTitle,
+        docHtml;
 
     const ENABLED_TRANSITION_ATTR = 'green',
         DISABLED_TRANSITION_ATTR = 'red';
@@ -255,7 +257,7 @@
         }
     }
 
-    export function buildGraph(links, title) {
+    export function buildGraph(links, title, doc) {
         removeGraph();
         graphTitle = title;
         Object.values(links).forEach(link => {
@@ -274,6 +276,10 @@
         });
         relayout();
         highlightEnabledTransitions();
+        if (doc) {
+            const converter = new showdown.Converter();
+            docHtml = converter.makeHtml(doc);
+        }
         paperEl.appendChild(paper.el);
         paperEl = paperEl;
     }
@@ -308,10 +314,19 @@
             </div>
         </div>
     </nav>
-    {#if !isFireable}
-        <div class="container reset-button-warn">
+
+    <div class="container firing-hint">
+        {#if !isFireable}
             <p class="text-danger">None of the transitions can be fired.
-                Press the reset button to restart. </p>
+                Press the reset button to restore network to its original state. </p>
+        {:else}
+            <p class="text-primary">Click on enabled transitions(blocks with green strokes) to fire.</p>
+        {/if}
+    </div>
+
+    {#if docHtml}
+        <div class="container">
+            {@html docHtml}
         </div>
     {/if}
     <div bind:this={paperEl}></div>
@@ -323,7 +338,7 @@
         margin-left: 20px;
     }
 
-    .reset-button-warn {
+    .firing-hint {
         margin-top: 20px;
     }
 </style>
