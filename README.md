@@ -68,7 +68,7 @@ The simulation for a Petri net is provided using [`PetriNetSimulator`](./src/vis
 ![interpreter](./images/interpreter.gif)
 
 ## Known Issues
-1. For Decorator issues see [#17](https://github.com/umesh-timalsina/issues/17).
+1. For Decorator issues see [#17](https://github.com/umesh-timalsina/PeNDeS/issues/17).
 
 ## License
 [MIT](./LICENSE)
